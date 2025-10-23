@@ -3,10 +3,8 @@ import { ref, computed, onMounted } from 'vue';
 
 const users = ref([]);
 const loading = ref(true);
-const error = ref(null);
 
 const fetchUsersData = async () => {
-  error.value = null;
   loading.value = true;
 
   const APIURL = 'https://jsonplaceholder.typicode.com/users';
@@ -22,7 +20,6 @@ const fetchUsersData = async () => {
     users.value = data;
 
   } catch (err) {
-    error.value = err.message;
     console.error(err)
   } finally {
     loading.value = false;
@@ -33,13 +30,12 @@ const searchQuery = ref("")
 
 const filteredUsers = computed(() => {
   if (!searchQuery.value) {
-
-    return users.value; // Return all items if search query is empty
+    return users.value; // Just return all users if search is empty
   }
   const query = searchQuery.value.toLowerCase();
 
   return users.value.filter(item =>
-    item.name.toLowerCase().includes(query)
+    item.name.toLowerCase().includes(query) // Filter the user by name that only included in the searchQuery
   );
 
 })
@@ -60,8 +56,6 @@ onMounted(fetchUsersData);
 
       <p v-if="loading">Loading data...</p>
 
-      <p v-if="error" class="error-message">Error: {{ error }}</p>
-
       <table v-if="!loading" class="table-auto w-[80vw] border text-sm text-left rtl:text-right text-gray-500">
 
         <thead class="uppercase bg-gray-50 text-xs text-gray-70">
@@ -77,6 +71,7 @@ onMounted(fetchUsersData);
         <tbody v-if="filteredUsers.length">
           <tr v-for="user in filteredUsers" :key="user.id" class="border bg-white hover:bg-gray-200 cursor-pointer"
             @click="$router.push({ path: `/user/${user.id}/posts`, query: { name: user.name } })">
+            <!-- Reroute the user based on user id and put the user.name in the query -->
 
             <td class="px-6 py-4 ">{{ user.name }}</td>
             <td class="px-6 py-4">{{ user.email }}</td>
