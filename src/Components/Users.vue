@@ -56,14 +56,14 @@ onMounted(fetchUsersData);
 
       <p v-if="loading">Loading data...</p>
 
-      <table v-if="!loading" class="table-auto w-[80vw] border text-sm text-left rtl:text-right text-gray-500">
+      <table v-if="!loading" class="table-fixed w-[80vw] border text-sm text-left rtl:text-right text-gray-500">
 
         <thead class="uppercase bg-gray-50 text-xs text-gray-70">
           <tr>
-            <th class="px-6 py-3">Name</th>
-            <th class="px-6 py-3">Email</th>
-            <th class="px-6 py-3">City</th>
-            <th class="px-6 py-3">Company</th>
+            <th class="px-6 py-3 w-[25%]">Name</th>
+            <th class="px-6 py-3 w-[25%]">Email</th>
+            <th class="px-6 py-3 w-[25%]">City</th>
+            <th class="px-6 py-3 w-[25%]">Company</th>
           </tr>
         </thead>
 
@@ -73,10 +73,18 @@ onMounted(fetchUsersData);
             @click="$router.push({ path: `/user/${user.id}/posts`, query: { name: user.name } })">
             <!-- Reroute the user based on user id and put the user.name in the query -->
 
-            <td class="px-6 py-4 ">{{ user.name }}</td>
-            <td class="px-6 py-4">{{ user.email }}</td>
-            <td class="px-6 py-4">{{ user.address.city }}</td>
-            <td class="px-6 py-4">{{ user.company.name }}</td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
+              {{ user.name }}
+            </td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
+              {{ user.email }}
+            </td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
+              {{ user.address.city }}
+            </td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
+              {{ user.company.name }}
+            </td>
           </tr>
         </tbody>
 
