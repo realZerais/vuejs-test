@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 
-const users = ref([]);
+const usersData = ref([]);
+const users = ref([]) // for DOM
 const loading = ref(true);
 
 const fetchUsersData = async () => {
@@ -17,6 +18,7 @@ const fetchUsersData = async () => {
 
     }
     const data = await response.json();
+    usersData.value = data;
     users.value = data;
 
   } catch (err) {
@@ -24,23 +26,31 @@ const fetchUsersData = async () => {
   } finally {
     loading.value = false;
   }
+
 };
 
 const searchQuery = ref("")
 
-const filteredUsers = computed(() => {
-  if (!searchQuery.value) {
-    return users.value; // Just return all users if search is empty
-  }
-  const query = searchQuery.value.toLowerCase();
+watch(() => searchQuery.value, (newVal) => {
 
-  return users.value.filter(item =>
-    item.name.toLowerCase().includes(query) // Filter the user by name that only included in the searchQuery
-  );
+  if (!newVal || newVal === "") {
+
+    users.value = usersData.value; // Just return all initial usersData if search is empty
+
+  } else {
+
+    const query = searchQuery.value.toLowerCase();
+
+    users.value = users.value.filter(item =>
+      item.name.toLowerCase().includes(query) // Filter the user by name that only included in the searchQuery
+    );
+
+  }
 
 })
 
 onMounted(fetchUsersData);
+
 </script>
 
 
@@ -48,7 +58,7 @@ onMounted(fetchUsersData);
 
   <div class="min-h-screen flex flex-col gap-5  items-center mt-5">
 
-    <div class="flex  w-[80vw] justify-end">
+    <div class="flex  w-[80vw] justify-end gap-4">
       <input type="text" class="border text-gray-500 rounded-md p-2 h-[5vh]" placeholder="search" v-model="searchQuery">
     </div>
 
@@ -68,23 +78,15 @@ onMounted(fetchUsersData);
         </thead>
 
 
-        <tbody v-if="filteredUsers.length">
-          <tr v-for="user in filteredUsers" :key="user.id" class="border bg-white hover:bg-gray-200 cursor-pointer"
+        <tbody v-if="users.length">
+          <tr v-for="user in users" :key="user.id" class="border bg-white hover:bg-gray-200 cursor-pointer"
             @click="$router.push({ path: `/user/${user.id}/posts`, query: { name: user.name } })">
             <!-- Reroute the user based on user id and put the user.name in the query -->
 
-            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
-              {{ user.name }}
-            </td>
-            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
-              {{ user.email }}
-            </td>
-            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
-              {{ user.address.city }}
-            </td>
-            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">
-              {{ user.company.name }}
-            </td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">{{ user.name }}</td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">{{ user.email }}</td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">{{ user.address.city }}</td>
+            <td class="px-6 py-4 truncate overflow-hidden text-ellipsis">{{ user.company.name }}</td>
           </tr>
         </tbody>
 

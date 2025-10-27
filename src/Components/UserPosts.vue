@@ -49,6 +49,7 @@ onMounted(() => fetchUserPosts(route.params.id)) // Pass the id through route pa
       <div v-if="!loading" v-for="post in userPosts" :key="post.id"
         class="min-h-[50vh] border rounded-lg bg-gray-100 text-gray-70">
 
+
         <div class="flex flex-col justify-start p-4 gap-4">
 
           <h2 class="text-2xl font-semibold">{{ post.title }}</h2>
