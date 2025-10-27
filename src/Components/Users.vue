@@ -33,20 +33,17 @@ const searchQuery = ref("")
 
 watch(() => searchQuery.value, (newVal) => {
 
-  if (!newVal || newVal === "") {
-
-    users.value = usersData.value; // Just return all initial usersData if search is empty
-
-  } else {
+  if (newVal) {
 
     const query = searchQuery.value.toLowerCase();
 
     users.value = users.value.filter(item =>
-      item.name.toLowerCase().includes(query) // Filter the user by name that only included in the searchQuery
+      item.name.toLowerCase().includes(query)  // Filter the user by name that only included in the searchQuery
     );
 
+  } else if (!newVal || newVal == null || newVal == "") {
+    users.value = usersData.value; // Just return all initial usersData if search is empty
   }
-
 })
 
 onMounted(fetchUsersData);
